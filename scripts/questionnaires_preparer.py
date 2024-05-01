@@ -4,8 +4,6 @@ import pandas as pd
 from icecream import ic
 
 from model.data_handler import DataHandler
-from model.managers.csv_manager import CSVManager
-from model.managers.shx_manager import SHXManager
 from model.questionnarie.graphics_builder import GraphicsBuilder
 
 
