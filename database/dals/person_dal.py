@@ -12,6 +12,9 @@ class PersonDAO:
     def get_one(self, person_id: int) -> Type[Person] | None:
         return self.session.query(Person).get(person_id)
 
+    def get_one_by_full_name(self, full_name: str) -> Type[Person] | None:
+        return self.session.query(Person).filter_by(full_name=full_name).first()
+
     def get_all(self) -> List[Type[Person]] | None:
         return self.session.query(Person).all()
 
