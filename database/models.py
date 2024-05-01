@@ -1,11 +1,11 @@
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
+from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
 from database.db import Base, engine
 
 
 class Person(Base):
-    __tablename__ = 'Questionnaires'
+    __tablename__ = 'Persons'
     id = Column(Integer(), primary_key=True, nullable=False, autoincrement=True)
     full_name = Column(String(), unique=True, nullable=False)
     social_status = Column(String(), nullable=False)
@@ -22,6 +22,9 @@ class Movement(Base):
     arrival_time = Column(String(), nullable=False)
     departure_points = Column(String(), nullable=False)
     arrival_points = Column(String(), nullable=False)
+
+    person_id = Column(Integer(), ForeignKey('Persons.id'), nullable=False)
+    person = relationship("Person")
 
 
 if __name__ == '__main__':
