@@ -14,7 +14,7 @@ class PersonPreparer:
         }
 
     def get_person_data(self, name, social_status):
-        person_data = {"full_name": name, "social_status": social_status}
+        person_data = {"full_name": name, "social_status": self.get_key_by_value(social_status)}
         return person_data
 
     def get_key_by_value(self, value):
