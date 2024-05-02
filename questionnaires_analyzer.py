@@ -1,2 +1,2 @@
-class QuestionnairesАnalyzer:
+class QuestionnairesAnalyzer:
     pass
