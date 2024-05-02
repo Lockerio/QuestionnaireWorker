@@ -62,13 +62,13 @@ class QuestionnairesAnalyzer:
 
 if __name__ == "__main__":
     shape_filepath = r"C:\Users\Lokerio\Desktop\границы_агломерация.shp"
-    questionnaire_preparer = QuestionnairesAnalyzer(shape_filepath)
+    questionnaire_analyzer = QuestionnairesAnalyzer(shape_filepath)
 
     # График распределения по времени
-    questionnaire_preparer.build_hours_plot("Трудящиеся", "Дом", "Понедельник".lower())
+    questionnaire_analyzer.build_hours_plot("Трудящиеся", "Дом", "Понедельник".lower())
 
     # Диаграмма распределения социального статуса
-    questionnaire_preparer.build_people_pie_diagram()
+    questionnaire_analyzer.build_people_pie_diagram()
 
     # Диаграмма распределения типов передвижения
-    questionnaire_preparer.build_types_pie_diagram()
+    questionnaire_analyzer.build_types_pie_diagram()
