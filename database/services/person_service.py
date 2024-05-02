@@ -15,10 +15,15 @@ class PersonService:
         return self.dao.get_all()
 
     def create(self, data):
-        person = self.dao.get_one_by_full_name(data["full_name"])
-        if person:
+        name = data["full_name"]
+        if name:
+            person = self.dao.get_one_by_full_name(data["full_name"])
+            if person:
+                return person
             return self.dao.create(data)
-        return person
+
+        data["full_name"] = "Аноним"
+        return self.dao.create(data)
 
     def delete(self, person_id):
         self.dao.delete(person_id)

@@ -7,7 +7,7 @@ from database.db import Base, engine
 class Person(Base):
     __tablename__ = 'Persons'
     id = Column(Integer(), primary_key=True, nullable=False, autoincrement=True)
-    full_name = Column(String(), unique=True, nullable=False)
+    full_name = Column(String(), nullable=False)
     social_status = Column(String(), nullable=False)
 
 
@@ -24,7 +24,6 @@ class Movement(Base):
     departure_lon = Column(Float(), nullable=False)
     arrival_lat = Column(Float(), nullable=False)
     arrival_lon = Column(Float(), nullable=False)
-
 
     person_id = Column(Integer(), ForeignKey('Persons.id'), nullable=False)
     person = relationship("Person")

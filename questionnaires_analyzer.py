@@ -1,0 +1,2 @@
+class QuestionnairesАnalyzer:
+    pass

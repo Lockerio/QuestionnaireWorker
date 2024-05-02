@@ -13,13 +13,8 @@ class PersonPreparer:
             ]
         }
 
-    def get_person_data(self, raw_person_data):
-        person_data = {}
-        social_status = self.get_key_by_value(raw_person_data["socialStatus"])
-
-        person_data["full_name"] = raw_person_data["name"]
-        person_data["social_status"] = social_status
-
+    def get_person_data(self, name, social_status):
+        person_data = {"full_name": name, "social_status": social_status}
         return person_data
 
     def get_key_by_value(self, value):
