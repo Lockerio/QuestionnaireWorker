@@ -12,9 +12,6 @@ class MovementDAO:
     def get_one(self, movement_id: int) -> Type[Movement] | None:
         return self.session.query(Movement).get(movement_id)
 
-    def get_one_by_title(self, title: str) -> Type[Movement] | None:
-        return self.session.query(Movement).filter_by(title=title).first()
-
     def get_all(self) -> List[Type[Movement]] | None:
         return self.session.query(Movement).all()
 

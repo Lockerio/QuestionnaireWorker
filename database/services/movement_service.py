@@ -8,9 +8,6 @@ class MovementService:
     def get_one(self, movement_id):
         return self.dao.get_one(movement_id)
 
-    def get_one_by_title(self, movement_title: str):
-        return self.dao.get_one_by_title(movement_title)
-
     def get_all(self):
         return self.dao.get_all()
 
