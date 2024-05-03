@@ -1,4 +1,5 @@
 import pandas as pd
+from tqdm import tqdm
 
 from database.container import movement_service
 
@@ -7,7 +8,7 @@ def get_df_from_db() -> pd.DataFrame:
     movements = movement_service.get_all()
 
     data = []
-    for movement in movements:
+    for movement in tqdm(movements, total=len(movements), desc="Заполнение датафрейма"):
         data.append({
             "Имя человека": movement.person.full_name,
             "Социальный статус": movement.person.social_status,

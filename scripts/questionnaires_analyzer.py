@@ -42,7 +42,7 @@ class QuestionnairesAnalyzer:
                 count_records += len(df_copy[(df_copy['Место отправления'] == i_places_type) & (df_copy['Место прибытия'] == j_places_type)])
 
                 if count_records:
-                    place_to_place_title = f"{i_places_type[0].title()} - {j_places_type[0].title()}"
+                    place_to_place_title = f"{i_places_type} - {j_places_type}"
                     movement_types_amount_dict[place_to_place_title] = count_records
 
         GraphicsBuilder.create_pie_diagram_graphic(movement_types_amount_dict, "Распределение типов передвижений")

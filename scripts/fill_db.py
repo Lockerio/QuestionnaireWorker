@@ -10,7 +10,12 @@ questionnaire_parser = QuestionnaireParser()
 person_preparer = PersonPreparer()
 movement_preparer = MovementPreparer()
 
-raw_questionnaires_data = questionnaire_parser.get_questionnaires_json()
+# Если есть интернет
+# raw_questionnaires_data = questionnaire_parser.get_questionnaires_json()
+
+# Если интернета нет
+raw_questionnaires_data = questionnaire_parser.get_questionnaires_json_from_file("../data.json")
+
 questionnaires_data = raw_questionnaires_data["questionnaires"]
 
 for questionnaire in tqdm(questionnaires_data, total=len(questionnaires_data), desc="Заполнение БД"):
