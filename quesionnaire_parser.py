@@ -4,9 +4,7 @@ import requests
 
 class QuestionnaireParser:
     def __init__(self):
-        # Ссылка может быть нерабочей, так как СНО "Городская мобильность" собирается
-        # переезжать на новый домен. Если ссылка нерабочая, получите новую у Кирилла
-        self.url = "https://tl-istu.ru/api/questionnaire?order=ASC"
+        self.url = "https://survey.labum.tech/api/questionnaire?order=ASC"
 
     def get_questionnaires_json(self):
         questionnaires_json = requests.get(self.url).json()
