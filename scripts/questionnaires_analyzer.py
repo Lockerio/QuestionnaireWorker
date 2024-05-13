@@ -26,6 +26,8 @@ class QuestionnairesAnalyzer:
                 title = people_type
                 people_amount_dict[title] = count_records
 
+            count_records = 0
+
         GraphicsBuilder.create_pie_diagram_graphic(people_amount_dict, "Распределение типов людей")
 
     def build_types_pie_diagram(self, weekday=None):
