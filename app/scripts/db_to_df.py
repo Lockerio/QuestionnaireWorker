@@ -1,7 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
 
-from database.container import movement_service
+from app.database.container import movement_service
 
 
 def get_df_from_db() -> pd.DataFrame:

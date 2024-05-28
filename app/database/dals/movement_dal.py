@@ -2,7 +2,7 @@ from typing import Dict, Type, List
 
 from sqlalchemy.orm import Session
 
-from database.models import Movement
+from app.database.models import Movement
 
 
 class MovementDAO:

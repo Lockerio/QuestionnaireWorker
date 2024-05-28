@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Float
 from sqlalchemy.orm import relationship
 
-from database.db import Base, engine
+from app.database.db import Base, engine
 
 
 class Person(Base):

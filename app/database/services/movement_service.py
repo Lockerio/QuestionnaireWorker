@@ -1,4 +1,4 @@
-from database.dals.movement_dal import MovementDAO
+from app.database.dals.movement_dal import MovementDAO
 
 
 class MovementService:

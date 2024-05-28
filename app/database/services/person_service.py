@@ -1,4 +1,4 @@
-from database.dals.person_dal import PersonDAO
+from app.database.dals.person_dal import PersonDAO
 
 
 class PersonService:

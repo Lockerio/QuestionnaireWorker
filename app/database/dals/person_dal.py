@@ -2,7 +2,7 @@ from typing import Dict, Type, List
 
 from sqlalchemy.orm import Session
 
-from database.models import Person
+from app.database.models import Person
 
 
 class PersonDAO:

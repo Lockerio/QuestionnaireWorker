@@ -1,9 +1,9 @@
 from tqdm import tqdm
 
-from database.container import person_service, movement_service
-from preparers.movement_preparer import MovementPreparer
-from preparers.person_preparer import PersonPreparer
-from quesionnaire_parser import QuestionnaireParser
+from app.database.container import person_service, movement_service
+from app.preparers.movement_preparer import MovementPreparer
+from app.preparers.person_preparer import PersonPreparer
+from app.quesionnaire_parser import QuestionnaireParser
 
 
 questionnaire_parser = QuestionnaireParser()

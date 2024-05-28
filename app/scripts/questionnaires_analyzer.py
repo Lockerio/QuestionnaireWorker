@@ -1,8 +1,7 @@
-import pandas as pd
 import geopandas as gpd
 
-from graphics_builder import GraphicsBuilder
-from scripts.db_to_df import get_df_from_db
+from app.graphics_builder import GraphicsBuilder
+from app.scripts.db_to_df import get_df_from_db
 
 
 class QuestionnairesAnalyzer:

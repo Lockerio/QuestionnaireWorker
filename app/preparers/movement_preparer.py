@@ -1,4 +1,4 @@
-from datetime_converter import DatetimeConverter
+from app.datetime_converter import DatetimeConverter
 
 
 class MovementPreparer:
