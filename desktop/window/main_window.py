@@ -3,6 +3,7 @@ import traceback
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QThreadPool, Qt, QSize
 from PyQt6.QtWidgets import QVBoxLayout
+from matplotlib.backends.backend_qt import NavigationToolbar2QT
 from matplotlib.figure import Figure
 
 from app.scripts.db_to_df import get_df_from_db
@@ -33,13 +34,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.social_status_diagram_canvas = MplCanvas(self.social_status_diagram_figure, self)
         self.movement_type_diagram_canvas = MplCanvas(self.movement_type_diagram_figure, self)
 
+        time_plot_toolbar = NavigationToolbar2QT(self.time_plot_canvas, self)
+        social_status_diagram_toolbar = NavigationToolbar2QT(self.social_status_diagram_canvas, self)
+        movement_type_diagram_toolbar = NavigationToolbar2QT(self.movement_type_diagram_canvas, self)
+
         time_plot_layout = QVBoxLayout()
         social_status_diagram_layout = QVBoxLayout()
         movement_type_diagram_layout = QVBoxLayout()
 
         time_plot_layout.addWidget(self.time_plot_canvas)
+        time_plot_layout.addWidget(time_plot_toolbar)
         social_status_diagram_layout.addWidget(self.social_status_diagram_canvas)
+        social_status_diagram_layout.addWidget(social_status_diagram_toolbar)
         movement_type_diagram_layout.addWidget(self.movement_type_diagram_canvas)
+        movement_type_diagram_layout.addWidget(movement_type_diagram_toolbar)
 
         self.ui.timePlotWidget.setLayout(time_plot_layout)
         self.ui.socialStatusDiagramWidget.setLayout(social_status_diagram_layout)
@@ -54,27 +62,38 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.wednesDayCheckBox_timePlot,
             self.ui.thursdayCheckBox_timePlot,
             self.ui.fridayCheckBox_timePlot,
+        ]
+        self.weekends_time_plot = [
             self.ui.saturdayCheckBox_timePlot,
             self.ui.sundayCheckBox_timePlot
         ]
+        self.general_weekdays_time_plot = self.weekdays_time_plot + self.weekends_time_plot
+
         self.weekdays_social_status_diagram = [
             self.ui.mondayCheckBox_socialStatusDiagram,
             self.ui.tuesdayCheckBox_socialStatusDiagram,
             self.ui.wednesDayCheckBox_socialStatusDiagram,
             self.ui.thursdayCheckBox_socialStatusDiagram,
             self.ui.fridayCheckBox_socialStatusDiagram,
+        ]
+        self.weekends_social_status_diagram = [
             self.ui.saturdayCheckBox_socialStatusDiagram,
             self.ui.sundayCheckBox_socialStatusDiagram
         ]
+        self.general_weekdays_social_status_diagram = self.weekdays_social_status_diagram + self.weekends_social_status_diagram
+
         self.weekdays_movement_type_diagram = [
             self.ui.mondayCheckBox_movementTypesDiagram,
             self.ui.tuesdayCheckBox_movementTypesDiagram,
             self.ui.wednesDayCheckBox_movementTypesDiagram,
             self.ui.thursdayCheckBox_movementTypesDiagram,
             self.ui.fridayCheckBox_movementTypesDiagram,
+        ]
+        self.weekends_movement_type_diagram = [
             self.ui.saturdayCheckBox_movementTypesDiagram,
             self.ui.sundayCheckBox_movementTypesDiagram
         ]
+        self.general_weekdays_movement_type_diagram = self.weekdays_movement_type_diagram + self.weekends_movement_type_diagram
 
         try:
             self.df = get_df_from_db()
@@ -89,7 +108,50 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.buildSocialStatusDiagramButton.clicked.connect(self.build_social_status_diagram)
         self.ui.buildMovementTypesDiagramButton.clicked.connect(self.build_movement_types_diagram)
 
+        self.ui.resetFiltersPushButton.clicked.connect(self.reset_time_plot_filters)
+        self.ui.resetFiltersPushButton_socialStatusDiagram.clicked.connect(self.reset_social_status_diagram_filters)
+        self.ui.resetFiltersPushButton_movementTypesDiagram.clicked.connect(self.reset_movement_types_diagram_filters)
 
+        # Фильтрация
+        self.ui.weekdaysRadioButton_timePlot.toggled.connect(lambda: self.fill_weekdays_radiobutton(
+            self.weekdays_time_plot,
+            self.weekends_time_plot,
+        ))
+        self.ui.weekendsRadioButton_timePlot.toggled.connect(lambda: self.fill_weekends_radiobutton(
+            self.weekdays_time_plot,
+            self.weekends_time_plot,
+        ))
+        self.ui.CustomWeekdaysRadioButton_timePlot.toggled.connect(lambda: self.set_custom_weekdays(
+            self.general_weekdays_time_plot
+        ))
+
+        self.ui.weekdaysRadioButton_socialStatusDiagram.toggled.connect(lambda: self.fill_weekdays_radiobutton(
+            self.weekdays_social_status_diagram,
+            self.weekends_social_status_diagram
+        ))
+        self.ui.weekendsRadioButton_socialStatusDiagram.toggled.connect(lambda: self.fill_weekends_radiobutton(
+            self.weekdays_social_status_diagram,
+            self.weekends_social_status_diagram
+        ))
+        self.ui.CustomWeekdaysRadioButton_socialStatusDiagram.toggled.connect(lambda: self.set_custom_weekdays(
+            self.general_weekdays_social_status_diagram
+        ))
+
+        self.ui.weekdaysRadioButton_movementTypesDiagram.toggled.connect(lambda: self.fill_weekdays_radiobutton(
+            self.weekdays_movement_type_diagram,
+            self.weekends_movement_type_diagram
+        ))
+        self.ui.weekendsRadioButton_movementTypesDiagram.toggled.connect(lambda: self.fill_weekends_radiobutton(
+            self.weekdays_movement_type_diagram,
+            self.weekends_movement_type_diagram
+        ))
+        self.ui.CustomWeekdaysRadioButton_movementTypesDiagram.toggled.connect(lambda: self.set_custom_weekdays(
+            self.general_weekdays_movement_type_diagram
+        ))
+
+        self.reset_time_plot_filters()
+        self.reset_social_status_diagram_filters()
+        self.reset_movement_types_diagram_filters()
 
     def create_db_thread(self):
         self.print_start_thread_message()
@@ -139,7 +201,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             departure_place = None
 
-        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.weekdays_time_plot)
+        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_time_plot)
 
         if weekdays:
             weekdays = list(map(lambda rb: rb.text().lower(), weekdays))
@@ -161,7 +223,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.time_plot_canvas.resize(QSize(new_width, new_height))
 
     def build_social_status_diagram(self):
-        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.weekdays_social_status_diagram)
+        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_social_status_diagram)
 
         if weekdays:
             weekdays = map(lambda rb: rb.text().lower(), weekdays)
@@ -182,7 +244,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.social_status_diagram_canvas.resize(QSize(new_width, new_height))
 
     def build_movement_types_diagram(self):
-        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.weekdays_movement_type_diagram)
+        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_movement_type_diagram)
 
         if weekdays:
             weekdays = map(lambda rb: rb.text().lower(), weekdays)
@@ -214,3 +276,57 @@ class MainWindow(QtWidgets.QMainWindow):
     def thread_complete(self, button):
         button.setEnabled(True)
         UILogger.log_message("Процесс завершен", self.ui.logsTextEdit)
+
+    def fill_weekdays_radiobutton(self, weekdays, weekends):
+        for weekday in weekdays:
+            weekday.setChecked(True)
+
+        for weekend in weekends:
+            weekend.setChecked(False)
+
+        for weekday in weekdays + weekends:
+            weekday.setEnabled(False)
+
+    def fill_weekends_radiobutton(self, weekdays, weekends):
+        for weekday in weekdays:
+            weekday.setChecked(False)
+
+        for weekend in weekends:
+            weekend.setChecked(True)
+
+        for weekday in weekdays + weekends:
+            weekday.setEnabled(False)
+
+    def set_custom_weekdays(self, weekdays):
+        for weekday in weekdays:
+            weekday.setChecked(False)
+            weekday.setEnabled(True)
+
+    def reset_time_plot_filters(self):
+        self.ui.employeeRadioButton_timePlot.setAutoExclusive(False)
+        self.ui.StudentRadioButton_timePlot.setAutoExclusive(False)
+        self.ui.OthersRadioButton_timePlot.setAutoExclusive(False)
+        self.ui.employeeRadioButton_timePlot.setChecked(False)
+        self.ui.StudentRadioButton_timePlot.setChecked(False)
+        self.ui.OthersRadioButton_timePlot.setChecked(False)
+        self.ui.employeeRadioButton_timePlot.setAutoExclusive(True)
+        self.ui.StudentRadioButton_timePlot.setAutoExclusive(True)
+        self.ui.OthersRadioButton_timePlot.setAutoExclusive(True)
+
+        self.ui.homeRadioButton_timePlot.setAutoExclusive(False)
+        self.ui.JobRadioButton_timePlot.setAutoExclusive(False)
+        self.ui.EducationRadioButton_timePlot.setAutoExclusive(False)
+        self.ui.homeRadioButton_timePlot.setChecked(False)
+        self.ui.JobRadioButton_timePlot.setChecked(False)
+        self.ui.EducationRadioButton_timePlot.setChecked(False)
+        self.ui.homeRadioButton_timePlot.setAutoExclusive(True)
+        self.ui.JobRadioButton_timePlot.setAutoExclusive(True)
+        self.ui.EducationRadioButton_timePlot.setAutoExclusive(True)
+
+        self.ui.CustomWeekdaysRadioButton_timePlot.setChecked(True)
+
+    def reset_social_status_diagram_filters(self):
+        self.ui.CustomWeekdaysRadioButton_socialStatusDiagram.setChecked(True)
+
+    def reset_movement_types_diagram_filters(self):
+        self.ui.CustomWeekdaysRadioButton_movementTypesDiagram.setChecked(True)

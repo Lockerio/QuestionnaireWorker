@@ -1,3 +1,4 @@
+from PyQt6.QtWidgets import QSizePolicy
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
 
