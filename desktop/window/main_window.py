@@ -1,3 +1,5 @@
+import traceback
+
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QThreadPool, Qt, QSize
 from PyQt6.QtWidgets import QVBoxLayout
@@ -36,8 +38,8 @@ class MainWindow(QtWidgets.QMainWindow):
         movement_type_diagram_layout = QVBoxLayout()
 
         time_plot_layout.addWidget(self.time_plot_canvas)
-        social_status_diagram_layout.addWidget(self.social_status_diagram_canvas, alignment=Qt.AlignmentFlag.AlignCenter)
-        movement_type_diagram_layout.addWidget(self.movement_type_diagram_canvas, alignment=Qt.AlignmentFlag.AlignCenter)
+        social_status_diagram_layout.addWidget(self.social_status_diagram_canvas)
+        movement_type_diagram_layout.addWidget(self.movement_type_diagram_canvas)
 
         self.ui.timePlotWidget.setLayout(time_plot_layout)
         self.ui.socialStatusDiagramWidget.setLayout(social_status_diagram_layout)
@@ -140,7 +142,8 @@ class MainWindow(QtWidgets.QMainWindow):
         weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.weekdays_time_plot)
 
         if weekdays:
-            weekdays = map(lambda rb: rb.text(), weekdays)
+            weekdays = list(map(lambda rb: rb.text().lower(), weekdays))
+            print(weekdays)
         else:
             weekdays = None
 
@@ -158,10 +161,46 @@ class MainWindow(QtWidgets.QMainWindow):
         self.time_plot_canvas.resize(QSize(new_width, new_height))
 
     def build_social_status_diagram(self):
-        pass
+        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.weekdays_social_status_diagram)
+
+        if weekdays:
+            weekdays = map(lambda rb: rb.text().lower(), weekdays)
+        else:
+            weekdays = None
+
+        figure = QuestionnairesAnalyzer.get_people_pie_diagram_figure(self.df, weekdays)
+
+        self.social_status_diagram_figure.clear()
+        self.social_status_diagram_figure = figure
+
+        self.social_status_diagram_canvas.figure = self.social_status_diagram_figure
+        self.social_status_diagram_canvas.draw()
+
+        plot_widget_size = self.ui.timePlotWidget.size()
+        new_width = int(plot_widget_size.width())
+        new_height = int(plot_widget_size.height())
+        self.social_status_diagram_canvas.resize(QSize(new_width, new_height))
 
     def build_movement_types_diagram(self):
-        pass
+        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.weekdays_movement_type_diagram)
+
+        if weekdays:
+            weekdays = map(lambda rb: rb.text().lower(), weekdays)
+        else:
+            weekdays = None
+
+        figure = QuestionnairesAnalyzer.get_types_pie_diagram_figure(self.df, weekdays)
+
+        self.movement_type_diagram_figure.clear()
+        self.movement_type_diagram_figure = figure
+
+        self.movement_type_diagram_canvas.figure = self.movement_type_diagram_figure
+        self.movement_type_diagram_canvas.draw()
+
+        plot_widget_size = self.ui.timePlotWidget.size()
+        new_width = int(plot_widget_size.width())
+        new_height = int(plot_widget_size.height())
+        self.movement_type_diagram_canvas.resize(QSize(new_width, new_height))
 
     def progress_fn(self, n):
         UILogger.log_message(f"{str(n)}", self.ui.logsTextEdit)
