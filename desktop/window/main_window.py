@@ -1,10 +1,12 @@
+import geopandas
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import QThreadPool, QSize, QStringListModel
-from PyQt6.QtWidgets import QVBoxLayout
+from PyQt6.QtWidgets import QVBoxLayout, QLineEdit, QFileDialog
 from matplotlib.backends.backend_qt import NavigationToolbar2QT
 from matplotlib.figure import Figure
 
 from app.df_to_list import df_to_list
+from app.get_data_by_shape import get_data_by_shape
 from app.scripts.db_to_df import get_df_from_db
 from app.questionnaires_filtration import QuestionnaireFiltration
 from desktop.runnable import Worker
@@ -103,7 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Кнопки
         self.ui.createDBButton.clicked.connect(self.create_db_thread)
-        self.ui.downloadDataAndFillDBButton.clicked.connect(self.download_data_and_fill_db_button)
+        self.ui.downloadDataAndFillDBButton.clicked.connect(self.download_data_and_fill_db_thread)
 
         self.ui.buildTimePlotButton.clicked.connect(self.build_time_plot)
         self.ui.buildSocialStatusDiagramButton.clicked.connect(self.build_social_status_diagram)
@@ -112,6 +114,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.resetFiltersPushButton.clicked.connect(self.reset_time_plot_filters)
         self.ui.resetFiltersPushButton_socialStatusDiagram.clicked.connect(self.reset_social_status_diagram_filters)
         self.ui.resetFiltersPushButton_movementTypesDiagram.clicked.connect(self.reset_movement_types_diagram_filters)
+
+        self.ui.uploadShapeFileButton.clicked.connect(
+            lambda: self.show_file_dialog(self.ui.filepathToShapeFile)
+        )
 
         # Фильтрация
         self.ui.weekdaysRadioButton_timePlot.toggled.connect(lambda: self.fill_weekdays_radiobutton(
@@ -167,7 +173,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.threadpool.start(worker)
 
-    def download_data_and_fill_db_button(self):
+    def download_data_and_fill_db_thread(self):
         self.print_start_thread_message()
 
         button = self.ui.downloadDataAndFillDBButton
@@ -181,6 +187,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.threadpool.start(worker)
 
     def build_time_plot(self):
+        try:
+            shape = geopandas.read_file(self.ui.filepathToShapeFile.text())
+            self.df = get_data_by_shape(self.df, shape, "lat", "lon")
+        except:
+            pass
+
         try:
             social_status = QuestionnaireFiltrationHelper.get_active_radiobutton([
                 self.ui.employeeRadioButton_timePlot,
@@ -229,6 +241,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def build_social_status_diagram(self):
         try:
+            shape = geopandas.read_file(self.ui.filepathToShapeFile.text())
+            self.df = get_data_by_shape(self.df, shape, "lat", "lon")
+        except:
+            pass
+
+        try:
             weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_social_status_diagram)
 
             if weekdays:
@@ -252,6 +270,12 @@ class MainWindow(QtWidgets.QMainWindow):
             pass
 
     def build_movement_types_diagram(self):
+        try:
+            shape = geopandas.read_file(self.ui.filepathToShapeFile.text())
+            self.df = get_data_by_shape(self.df, shape, "lat", "lon")
+        except:
+            pass
+
         try:
             weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_movement_type_diagram)
 
@@ -348,3 +372,8 @@ class MainWindow(QtWidgets.QMainWindow):
         list_from_df = df_to_list(self.df)
         model.setStringList(list_from_df)
         self.ui.DBPrewiewListView.setModel(model)
+
+    def show_file_dialog(self, text_field: QLineEdit):
+        file_name, _ = QFileDialog.getOpenFileName(self, "Выберите файл", "", "All Files (*)")
+        if file_name:
+            text_field.setText(file_name)

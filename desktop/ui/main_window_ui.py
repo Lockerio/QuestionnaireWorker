@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'main_window.ui'
+# Form implementation generated from reading ui file '.\main_window.ui'
 #
 # Created by: PyQt6 UI code generator 6.7.0
 #
@@ -39,8 +39,20 @@ class Ui_MainWindow(object):
         self.downloadDataAndFillDBButton.setObjectName("downloadDataAndFillDBButton")
         self.horizontalLayout_9.addWidget(self.downloadDataAndFillDBButton)
         self.DBPrewiewListView = QtWidgets.QListView(parent=self.tab)
-        self.DBPrewiewListView.setGeometry(QtCore.QRect(10, 60, 1031, 491))
+        self.DBPrewiewListView.setGeometry(QtCore.QRect(10, 100, 1031, 451))
         self.DBPrewiewListView.setObjectName("DBPrewiewListView")
+        self.layoutWidget = QtWidgets.QWidget(parent=self.tab)
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 60, 1031, 30))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.layoutWidget)
+        self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
+        self.filepathToShapeFile = QtWidgets.QLineEdit(parent=self.layoutWidget)
+        self.filepathToShapeFile.setObjectName("filepathToShapeFile")
+        self.horizontalLayout_10.addWidget(self.filepathToShapeFile)
+        self.uploadShapeFileButton = QtWidgets.QPushButton(parent=self.layoutWidget)
+        self.uploadShapeFileButton.setObjectName("uploadShapeFileButton")
+        self.horizontalLayout_10.addWidget(self.uploadShapeFileButton)
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -281,6 +293,8 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.createDBButton.setText(_translate("MainWindow", "Создать БД"))
         self.downloadDataAndFillDBButton.setText(_translate("MainWindow", "Скачать данные и заполнить БД"))
+        self.filepathToShapeFile.setPlaceholderText(_translate("MainWindow", "Введите путь до файла границ области (агломерации)"))
+        self.uploadShapeFileButton.setText(_translate("MainWindow", "Выбрать файл"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Данные и БД"))
         self.filtersGroupBox.setTitle(_translate("MainWindow", "Фильтрация"))
         self.socilalStatusGroupBox.setTitle(_translate("MainWindow", "Социальный статус"))
