@@ -37,6 +37,6 @@ def download_data_and_fill_db(progress_callback):
         completed_questionnaires += 1
         if completed_questionnaires % (total_questionnaires // 10) == 0:
             percent_complete = (completed_questionnaires / total_questionnaires) * 100
-            print(f"Progress: {percent_complete:.0f}%")
+            progress_callback.emit(f"Progress: {percent_complete:.0f}%")
 
     progress_callback.emit("БД заполнена")
