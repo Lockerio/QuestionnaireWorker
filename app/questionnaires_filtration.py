@@ -1,7 +1,7 @@
-from desktop.utils.graphics_builder import GraphicsBuilder
+from app.graphics_getter import GraphicsGetter
 
 
-class QuestionnairesAnalyzer:
+class QuestionnaireFiltration:
     @staticmethod
     def get_people_pie_diagram_figure(df, weekdays=None):
         df_copy = df.copy()
@@ -21,7 +21,7 @@ class QuestionnairesAnalyzer:
 
             count_records = 0
 
-        return GraphicsBuilder.get_pie_diagram_graphic_figure(people_amount_dict, "Распределение типов людей")
+        return GraphicsGetter.get_pie_diagram_graphic_figure(people_amount_dict, "Распределение типов людей")
 
     @staticmethod
     def get_types_pie_diagram_figure(df, weekdays=None):
@@ -41,7 +41,7 @@ class QuestionnairesAnalyzer:
                     place_to_place_title = f"{i_places_type} - {j_places_type}"
                     movement_types_amount_dict[place_to_place_title] = count_records
 
-        return GraphicsBuilder.get_pie_diagram_graphic_figure(movement_types_amount_dict, "Распределение типов передвижений")
+        return GraphicsGetter.get_pie_diagram_graphic_figure(movement_types_amount_dict, "Распределение типов передвижений")
 
     @staticmethod
     def get_hours_plot_figure(df, social_status=None, start_point_type=None, weekdays=None):
@@ -54,4 +54,4 @@ class QuestionnairesAnalyzer:
         if weekdays:
             df_copy = df_copy[df_copy["День недели"].isin(weekdays)]
 
-        return GraphicsBuilder.get_plot_graphic_figure(df_copy, social_status, start_point_type)
+        return GraphicsGetter.get_plot_graphic_figure(df_copy, social_status, start_point_type)

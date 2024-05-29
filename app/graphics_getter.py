@@ -1,7 +1,7 @@
 from matplotlib.figure import Figure
 
 
-class GraphicsBuilder:
+class GraphicsGetter:
     @staticmethod
     def get_plot_graphic_figure(df, people_type, place_type):
         hours = df['Время отправления']

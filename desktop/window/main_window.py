@@ -1,13 +1,12 @@
-import traceback
-
 from PyQt6 import QtWidgets
-from PyQt6.QtCore import QThreadPool, Qt, QSize
+from PyQt6.QtCore import QThreadPool, QSize, QStringListModel
 from PyQt6.QtWidgets import QVBoxLayout
 from matplotlib.backends.backend_qt import NavigationToolbar2QT
 from matplotlib.figure import Figure
 
+from app.df_to_list import df_to_list
 from app.scripts.db_to_df import get_df_from_db
-from desktop.questionnaires_analyzer import QuestionnairesAnalyzer
+from app.questionnaires_filtration import QuestionnaireFiltration
 from desktop.runnable import Worker
 from desktop.threads.create_db import create_db
 from desktop.threads.download_data_and_fill_db import download_data_and_fill_db
@@ -97,8 +96,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         try:
             self.df = get_df_from_db()
+            self.fill_list_view()
         except:
             self.df = None
+            UILogger.log_message("База данных не создана", self.ui.logsTextEdit)
 
         # Кнопки
         self.ui.createDBButton.clicked.connect(self.create_db_thread)
@@ -149,6 +150,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.general_weekdays_movement_type_diagram
         ))
 
+        # Функции, выполняющиеся при инициализации программы
         self.reset_time_plot_filters()
         self.reset_social_status_diagram_filters()
         self.reset_movement_types_diagram_filters()
@@ -179,96 +181,107 @@ class MainWindow(QtWidgets.QMainWindow):
         self.threadpool.start(worker)
 
     def build_time_plot(self):
-        social_status = QuestionnaireFiltrationHelper.get_active_radiobutton([
-            self.ui.employeeRadioButton_timePlot,
-            self.ui.StudentRadioButton_timePlot,
-            self.ui.OthersRadioButton_timePlot,
-        ])
+        try:
+            social_status = QuestionnaireFiltrationHelper.get_active_radiobutton([
+                self.ui.employeeRadioButton_timePlot,
+                self.ui.StudentRadioButton_timePlot,
+                self.ui.OthersRadioButton_timePlot,
+            ])
 
-        if social_status:
-            social_status = social_status.text()
-        else:
-            social_status = None
+            if social_status:
+                social_status = social_status.text()
+            else:
+                social_status = None
 
-        departure_place = QuestionnaireFiltrationHelper.get_active_radiobutton([
-            self.ui.homeRadioButton_timePlot,
-            self.ui.JobRadioButton_timePlot,
-            self.ui.EducationRadioButton_timePlot,
-        ])
+            departure_place = QuestionnaireFiltrationHelper.get_active_radiobutton([
+                self.ui.homeRadioButton_timePlot,
+                self.ui.JobRadioButton_timePlot,
+                self.ui.EducationRadioButton_timePlot,
+            ])
 
-        if departure_place:
-            departure_place = departure_place.text()
-        else:
-            departure_place = None
+            if departure_place:
+                departure_place = departure_place.text()
+            else:
+                departure_place = None
 
-        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_time_plot)
+            weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_time_plot)
 
-        if weekdays:
-            weekdays = list(map(lambda rb: rb.text().lower(), weekdays))
-            print(weekdays)
-        else:
-            weekdays = None
+            if weekdays:
+                weekdays = list(map(lambda rb: rb.text().lower(), weekdays))
+                print(weekdays)
+            else:
+                weekdays = None
 
-        figure = QuestionnairesAnalyzer.get_hours_plot_figure(self.df, social_status, departure_place, weekdays)
+            figure = QuestionnaireFiltration.get_hours_plot_figure(self.df, social_status, departure_place, weekdays)
 
-        self.time_plot_figure.clear()
-        self.time_plot_figure = figure
+            self.time_plot_figure.clear()
+            self.time_plot_figure = figure
 
-        self.time_plot_canvas.figure = self.time_plot_figure
-        self.time_plot_canvas.draw()
+            self.time_plot_canvas.figure = self.time_plot_figure
+            self.time_plot_canvas.draw()
 
-        plot_widget_size = self.ui.timePlotWidget.size()
-        new_width = int(plot_widget_size.width())
-        new_height = int(plot_widget_size.height())
-        self.time_plot_canvas.resize(QSize(new_width, new_height))
+            plot_widget_size = self.ui.timePlotWidget.size()
+            new_width = int(plot_widget_size.width())
+            new_height = int(plot_widget_size.height())
+            self.time_plot_canvas.resize(QSize(new_width, new_height))
+
+        except:
+            pass
 
     def build_social_status_diagram(self):
-        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_social_status_diagram)
+        try:
+            weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_social_status_diagram)
 
-        if weekdays:
-            weekdays = map(lambda rb: rb.text().lower(), weekdays)
-        else:
-            weekdays = None
+            if weekdays:
+                weekdays = map(lambda rb: rb.text().lower(), weekdays)
+            else:
+                weekdays = None
 
-        figure = QuestionnairesAnalyzer.get_people_pie_diagram_figure(self.df, weekdays)
+            figure = QuestionnaireFiltration.get_people_pie_diagram_figure(self.df, weekdays)
 
-        self.social_status_diagram_figure.clear()
-        self.social_status_diagram_figure = figure
+            self.social_status_diagram_figure.clear()
+            self.social_status_diagram_figure = figure
 
-        self.social_status_diagram_canvas.figure = self.social_status_diagram_figure
-        self.social_status_diagram_canvas.draw()
+            self.social_status_diagram_canvas.figure = self.social_status_diagram_figure
+            self.social_status_diagram_canvas.draw()
 
-        plot_widget_size = self.ui.timePlotWidget.size()
-        new_width = int(plot_widget_size.width())
-        new_height = int(plot_widget_size.height())
-        self.social_status_diagram_canvas.resize(QSize(new_width, new_height))
+            plot_widget_size = self.ui.timePlotWidget.size()
+            new_width = int(plot_widget_size.width())
+            new_height = int(plot_widget_size.height())
+            self.social_status_diagram_canvas.resize(QSize(new_width, new_height))
+        except:
+            pass
 
     def build_movement_types_diagram(self):
-        weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_movement_type_diagram)
+        try:
+            weekdays = QuestionnaireFiltrationHelper.get_weekdays(self.general_weekdays_movement_type_diagram)
 
-        if weekdays:
-            weekdays = map(lambda rb: rb.text().lower(), weekdays)
-        else:
-            weekdays = None
+            if weekdays:
+                weekdays = map(lambda rb: rb.text().lower(), weekdays)
+            else:
+                weekdays = None
 
-        figure = QuestionnairesAnalyzer.get_types_pie_diagram_figure(self.df, weekdays)
+            figure = QuestionnaireFiltration.get_types_pie_diagram_figure(self.df, weekdays)
 
-        self.movement_type_diagram_figure.clear()
-        self.movement_type_diagram_figure = figure
+            self.movement_type_diagram_figure.clear()
+            self.movement_type_diagram_figure = figure
 
-        self.movement_type_diagram_canvas.figure = self.movement_type_diagram_figure
-        self.movement_type_diagram_canvas.draw()
+            self.movement_type_diagram_canvas.figure = self.movement_type_diagram_figure
+            self.movement_type_diagram_canvas.draw()
 
-        plot_widget_size = self.ui.timePlotWidget.size()
-        new_width = int(plot_widget_size.width())
-        new_height = int(plot_widget_size.height())
-        self.movement_type_diagram_canvas.resize(QSize(new_width, new_height))
+            plot_widget_size = self.ui.timePlotWidget.size()
+            new_width = int(plot_widget_size.width())
+            new_height = int(plot_widget_size.height())
+            self.movement_type_diagram_canvas.resize(QSize(new_width, new_height))
+        except:
+            pass
 
     def progress_fn(self, n):
         UILogger.log_message(f"{str(n)}", self.ui.logsTextEdit)
 
     def set_df(self, s):
         self.df = s
+        self.fill_list_view()
 
     def print_start_thread_message(self):
         UILogger.log_message("Процесс начат", self.ui.logsTextEdit)
@@ -330,3 +343,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def reset_movement_types_diagram_filters(self):
         self.ui.CustomWeekdaysRadioButton_movementTypesDiagram.setChecked(True)
+
+    def fill_list_view(self):
+        model = QStringListModel()
+        list_from_df = df_to_list(self.df)
+        model.setStringList(list_from_df)
+        self.ui.DBPrewiewListView.setModel(model)
