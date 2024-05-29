@@ -1,3 +1,5 @@
+import collections
+
 from app.graphics_getter import GraphicsGetter
 
 
@@ -54,4 +56,7 @@ class QuestionnaireFiltration:
         if weekdays:
             df_copy = df_copy[df_copy["День недели"].isin(weekdays)]
 
-        return GraphicsGetter.get_plot_graphic_figure(df_copy, social_status, start_point_type)
+        hours = df_copy['Время отправления']
+        hour_counts = hours.value_counts().sort_index()
+
+        return GraphicsGetter.get_plot_graphic_figure(hour_counts, social_status, start_point_type)

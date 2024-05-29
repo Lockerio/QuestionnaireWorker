@@ -208,7 +208,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if weekdays:
                 weekdays = list(map(lambda rb: rb.text().lower(), weekdays))
-                print(weekdays)
             else:
                 weekdays = None
 

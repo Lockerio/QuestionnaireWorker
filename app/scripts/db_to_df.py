@@ -15,7 +15,7 @@ def get_df_from_db() -> pd.DataFrame:
             "День недели": movement.week_day,
             "Место отправления": movement.departure_place_type,
             "Место прибытия": movement.arrival_place_type,
-            "Время отправления": movement.departure_time,
+            "Время отправления": int(movement.departure_time),
             "lat": movement.departure_lat,
             "lon": movement.departure_lon,
         })

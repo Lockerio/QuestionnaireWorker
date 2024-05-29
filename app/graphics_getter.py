@@ -1,14 +1,13 @@
+import pandas as pd
 from matplotlib.figure import Figure
 
 
 class GraphicsGetter:
     @staticmethod
-    def get_plot_graphic_figure(df, people_type, place_type):
-        hours = df['Время отправления']
-
+    def get_plot_graphic_figure(hours, people_type, place_type):
         figure = Figure(figsize=(10, 6))
         ax = figure.add_subplot(111)
-        ax.plot(hours.value_counts().sort_index(), marker='o', color='skyblue', linestyle='-')
+        ax.plot(hours, marker='o', color='skyblue', linestyle='-')
         ax.set_xlabel('Час')
         ax.set_ylabel('Количество отправлений')
         ax.set_title(f"{people_type}: Отправление '{place_type}'")
