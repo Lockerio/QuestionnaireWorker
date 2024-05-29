@@ -1,11 +1,9 @@
 from matplotlib.figure import Figure
 
-from desktop.app.windows.graphics_window import GraphicsWindow
-
 
 class GraphicsBuilder:
     @staticmethod
-    def create_plot_graphic(df, people_type, place_type):
+    def get_plot_graphic_figure(df, people_type, place_type):
         hours = df['Время отправления']
 
         figure = Figure(figsize=(10, 6))
@@ -20,7 +18,7 @@ class GraphicsBuilder:
         return figure
 
     @staticmethod
-    def create_pie_diagram_graphic(amount_dict, title):
+    def get_pie_diagram_graphic_figure(amount_dict, title):
         labels = list(amount_dict.keys())
         sizes = list(amount_dict.values())
 

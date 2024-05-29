@@ -2,6 +2,7 @@ from app.database.container import person_service, movement_service
 from app.preparers.movement_preparer import MovementPreparer
 from app.preparers.person_preparer import PersonPreparer
 from app.quesionnaire_parser import QuestionnaireParser
+from app.scripts.db_to_df import get_df_from_db
 
 
 def download_data_and_fill_db(progress_callback):
@@ -40,3 +41,6 @@ def download_data_and_fill_db(progress_callback):
             progress_callback.emit(f"Progress: {percent_complete:.0f}%")
 
     progress_callback.emit("БД заполнена")
+
+    df = get_df_from_db()
+    return df
